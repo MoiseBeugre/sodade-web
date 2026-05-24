@@ -29,7 +29,7 @@ export default function CreateGroupPage() {
 
     try {
       const token = localStorage.getItem('accessToken');
-      const res = await fetch('http://localhost:3000/groups', {
+      const res = await fetch('${process.env.NEXT_PUBLIC_API_URL}/groups', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

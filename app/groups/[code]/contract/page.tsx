@@ -18,14 +18,14 @@ export default function ContractPage() {
       try {
         const token = localStorage.getItem('access_token');
 
-        const groupRes = await fetch(`http://localhost:3000/groups/${code}`, {
+        const groupRes = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/groups/${code}`, {
           headers: { Authorization: `Bearer ${token}` },
         });
         const groupData = await groupRes.json();
         if (!groupRes.ok) throw new Error(groupData.message);
         setGroup(groupData);
 
-        const contractRes = await fetch(`http://localhost:3000/groups/${groupData.id}/contract`, {
+        const contractRes = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/groups/${groupData.id}/contract`, {
           headers: { Authorization: `Bearer ${token}` },
         });
         const contractData = await contractRes.json();
@@ -48,14 +48,14 @@ export default function ContractPage() {
     setError('');
     try {
       const token = localStorage.getItem('access_token');
-      const res = await fetch(`http://localhost:3000/groups/${group.id}/contract/sign`, {
+      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/groups/${group.id}/contract/sign`, {
         method: 'POST',
         headers: { Authorization: `Bearer ${token}` },
       });
       const data = await res.json();
       if (!res.ok) throw new Error(data.message);
 
-      const contractRes = await fetch(`http://localhost:3000/groups/${group.id}/contract`, {
+      const contractRes = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/groups/${group.id}/contract`, {
         headers: { Authorization: `Bearer ${token}` },
       });
       const contractData = await contractRes.json();

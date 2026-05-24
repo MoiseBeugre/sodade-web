@@ -23,7 +23,7 @@ export default function RotationPage() {
     const fetchGroup = async () => {
       try {
         const token = localStorage.getItem('access_token');
-        const res = await fetch(`http://localhost:3000/groups/${code}`, {
+        const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/groups/${code}`, {
           headers: { Authorization: `Bearer ${token}` },
         });
         const data = await res.json();
@@ -49,7 +49,7 @@ export default function RotationPage() {
     setError('');
     try {
       const token = localStorage.getItem('access_token');
-      const res = await fetch(`http://localhost:3000/groups/${code}/rotation-mode`, {
+      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/groups/${code}/rotation-mode`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
         body: JSON.stringify({ mode }),
@@ -70,7 +70,7 @@ export default function RotationPage() {
     setError('');
     try {
       const token = localStorage.getItem('access_token');
-      const res = await fetch(`http://localhost:3000/groups/${code}/position`, {
+      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/groups/${code}/position`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
         body: JSON.stringify({ targetUserId, position }),
@@ -90,7 +90,7 @@ export default function RotationPage() {
     setError('');
     try {
       const token = localStorage.getItem('access_token');
-      const res = await fetch(`http://localhost:3000/groups/${code}/lock-rotation`, {
+      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/groups/${code}/lock-rotation`, {
         method: 'POST',
         headers: { Authorization: `Bearer ${token}` },
       });
@@ -263,7 +263,7 @@ export default function RotationPage() {
               setSaving(true);
               try {
                 const token = localStorage.getItem('access_token');
-                const res = await fetch(`http://localhost:3000/groups/${code}/cycles/initialize`, {
+                const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/groups/${code}/cycles/initialize`, {
                   method: 'POST',
                   headers: { Authorization: `Bearer ${token}` },
                 });

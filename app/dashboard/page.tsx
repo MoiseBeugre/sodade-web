@@ -17,7 +17,7 @@ export default function Dashboard() {
 
         const payload = JSON.parse(atob(token.split('.')[1]));
         
-        const profileRes = await fetch('http://localhost:3000/auth/profile', {
+        const profileRes = await fetch('${process.env.NEXT_PUBLIC_API_URL}/auth/profile', {
           headers: { Authorization: `Bearer ${token}` },
         });
         if (profileRes.ok) {
@@ -25,7 +25,7 @@ export default function Dashboard() {
           setUserName(profileData.user?.first_name || '');
         }
 
-        const res = await fetch('http://localhost:3000/groups', {
+        const res = await fetch('${process.env.NEXT_PUBLIC_API_URL}/groups', {
           headers: { Authorization: `Bearer ${token}` },
         });
         const data = await res.json();

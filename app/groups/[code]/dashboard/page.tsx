@@ -17,12 +17,12 @@ export default function GroupDashboard() {
         const payload = JSON.parse(atob(token!.split('.')[1]));
         setCurrentUserId(payload.sub);
 
-        const groupRes = await fetch(`http://localhost:3000/groups/${code}`, {
+        const groupRes = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/groups/${code}`, {
           headers: { Authorization: `Bearer ${token}` },
         });
         const groupData = await groupRes.json();
 
-        const res = await fetch(`http://localhost:3000/groups/${code}/cycles/dashboard`, {
+        const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/groups/${code}/cycles/dashboard`, {
           headers: { Authorization: `Bearer ${token}` },
         });
         const dashboard = await res.json();
@@ -111,7 +111,7 @@ export default function GroupDashboard() {
                   onClick={async () => {
                     try {
                       const token = localStorage.getItem('access_token');
-                      const res = await fetch(`http://localhost:3000/groups/${code}/cycles/pay`, {
+                      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/groups/${code}/cycles/pay`, {
                         method: 'POST',
                         headers: { Authorization: `Bearer ${token}` },
                       });
@@ -143,7 +143,7 @@ export default function GroupDashboard() {
                   onClick={async () => {
                     try {
                       const token = localStorage.getItem('access_token');
-                      const res = await fetch(`http://localhost:3000/groups/${code}/cycles/received`, {
+                      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/groups/${code}/cycles/received`, {
                         method: 'POST',
                         headers: { Authorization: `Bearer ${token}` },
                       });

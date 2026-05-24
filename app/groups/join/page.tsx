@@ -16,7 +16,7 @@ export default function JoinGroupPage() {
 
     try {
       const token = localStorage.getItem('access_token');
-      const res = await fetch(`http://localhost:3000/groups/${code.toUpperCase()}/join`, {
+      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/groups/${code.toUpperCase()}/join`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
