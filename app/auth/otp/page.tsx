@@ -1,6 +1,7 @@
 'use client';
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
+import { API_URL } from '@/lib/config';
 
 export default function Otp() {
   const [otp, setOtp] = useState(['', '', '', '', '', '']);
@@ -31,7 +32,7 @@ export default function Otp() {
     setLoading(true);
     setError('');
     try {
-      const res = await fetch(`https://sodade-api-production.up.railway.app/auth/verify-otp`, {
+      const res = await fetch(`${API_URL}/auth/verify-otp`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ phone: '+1' + phone, code }),

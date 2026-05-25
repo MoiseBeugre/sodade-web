@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
+import { API_URL } from '@/lib/config';
 
 export default function Dashboard() {
   const router = useRouter();
@@ -15,7 +16,7 @@ export default function Dashboard() {
         const token = localStorage.getItem('access_token');
         if (!token) { router.push('/auth/login'); return; }
 
-        const profileRes = await fetch(`https://sodade-api-production.up.railway.app/auth/profile`, {
+        const profileRes = await fetch(`${API_URL}/auth/profile`, {
           headers: { Authorization: `Bearer ${token}` },
         });
         if (profileRes.ok) {
@@ -23,7 +24,7 @@ export default function Dashboard() {
           setUserName(profileData.user?.first_name || '');
         }
 
-        const res = await fetch(`https://sodade-api-production.up.railway.app/groups`, {
+        const res = await fetch(`${API_URL}/groups`, {
           headers: { Authorization: `Bearer ${token}` },
         });
         const data = await res.json();
@@ -67,25 +68,13 @@ export default function Dashboard() {
             <p className="text-sm text-gray-500">Vos groupes d'épargne rotative</p>
           </div>
           <div className="w-10 h-10 bg-emerald-100 rounded-full flex items-center justify-center">
-            <span className="text-emerald-700 font-bold">
-              {userName?.[0]?.toUpperCase() || 'S'}
-            </span>
+            <span className="text-emerald-700 font-bold">{userName?.[0]?.toUpperCase() || 'S'}</span>
           </div>
         </div>
 
         <div className="grid grid-cols-2 gap-3 mb-6">
-          <button
-            onClick={() => router.push('/groups/create')}
-            className="bg-emerald-500 hover:bg-emerald-600 text-white font-medium py-3 rounded-xl text-sm transition"
-          >
-            + Créer un groupe
-          </button>
-          <button
-            onClick={() => router.push('/groups/join')}
-            className="bg-white border border-emerald-500 text-emerald-600 hover:bg-emerald-50 font-medium py-3 rounded-xl text-sm transition"
-          >
-            Rejoindre
-          </button>
+          <button onClick={() => router.push('/groups/create')} className="bg-emerald-500 hover:bg-emerald-600 text-white font-medium py-3 rounded-xl text-sm transition">+ Créer un groupe</button>
+          <button onClick={() => router.push('/groups/join')} className="bg-white border border-emerald-500 text-emerald-600 hover:bg-emerald-50 font-medium py-3 rounded-xl text-sm transition">Rejoindre</button>
         </div>
 
         {groups.length === 0 ? (
@@ -102,28 +91,18 @@ export default function Dashboard() {
               const status = STATUS_CONFIG[group.status] || STATUS_CONFIG.PENDING;
               const myRole = group.memberships?.[0]?.role;
               const memberCount = group._count?.memberships || 0;
-
               return (
-                <div
-                  key={group.id}
-                  onClick={() => router.push(`/groups/${group.code}`)}
-                  className="bg-white rounded-2xl shadow-sm p-5 cursor-pointer hover:shadow-md transition border border-transparent hover:border-emerald-200"
-                >
+                <div key={group.id} onClick={() => router.push(`/groups/${group.code}`)} className="bg-white rounded-2xl shadow-sm p-5 cursor-pointer hover:shadow-md transition border border-transparent hover:border-emerald-200">
                   <div className="flex items-start justify-between mb-3">
                     <div>
                       <h2 className="font-bold text-gray-900">{group.name}</h2>
-                      {group.description && (
-                        <p className="text-xs text-gray-400 mt-0.5">{group.description}</p>
-                      )}
+                      {group.description && <p className="text-xs text-gray-400 mt-0.5">{group.description}</p>}
                       <div className="flex justify-end mt-3">
                         <span className="text-xs text-emerald-600 font-medium">Voir le groupe →</span>
                       </div>
                     </div>
-                    <span className={`text-xs px-2 py-1 rounded-full font-medium ${status.bg} ${status.text}`}>
-                      {status.label}
-                    </span>
+                    <span className={`text-xs px-2 py-1 rounded-full font-medium ${status.bg} ${status.text}`}>{status.label}</span>
                   </div>
-
                   <div className="grid grid-cols-3 gap-2">
                     <div className="bg-gray-50 rounded-xl p-2 text-center">
                       <p className="text-xs text-gray-400">Montant</p>
@@ -138,14 +117,9 @@ export default function Dashboard() {
                       <p className="text-sm font-bold text-gray-900">{memberCount}/{group.maxMembers}</p>
                     </div>
                   </div>
-
                   <div className="flex items-center justify-between mt-3">
-                    <span className="text-xs text-gray-400">
-                      {myRole === 'ADMIN' ? '👑 Admin' : '👤 Membre'}
-                    </span>
-                    <span className="text-xs text-gray-400">
-                      Départ : {new Date(group.startDate).toLocaleDateString('fr-CA')}
-                    </span>
+                    <span className="text-xs text-gray-400">{myRole === 'ADMIN' ? '👑 Admin' : '👤 Membre'}</span>
+                    <span className="text-xs text-gray-400">Départ : {new Date(group.startDate).toLocaleDateString('fr-CA')}</span>
                   </div>
                 </div>
               );

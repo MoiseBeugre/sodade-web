@@ -1,6 +1,7 @@
 'use client';
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
+import { API_URL } from '@/lib/config';
 
 export default function Profile() {
   const [firstName, setFirstName] = useState('');
@@ -17,7 +18,7 @@ export default function Profile() {
     setError('');
     try {
       const token = localStorage.getItem('access_token');
-      const res = await fetch(`https://sodade-api-production.up.railway.app/auth/profile`, {
+      const res = await fetch(`${API_URL}/auth/profile`, {
         method: 'PATCH',
         headers: {
           'Content-Type': 'application/json',
@@ -51,7 +52,6 @@ export default function Profile() {
         </div>
         <h1 className="text-xl font-semibold text-gray-900 mb-1">Votre profil</h1>
         <p className="text-sm text-gray-500 mb-6">Quelques infos pour commencer</p>
-
         <div className="flex justify-center mb-6">
           <div className="w-16 h-16 rounded-full bg-green-50 flex items-center justify-center">
             <svg className="w-7 h-7 text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -59,65 +59,25 @@ export default function Profile() {
             </svg>
           </div>
         </div>
-
         <div className="mb-4">
           <label className="text-xs text-gray-400 mb-1 block">Prénom *</label>
-          <input
-            type="text"
-            value={firstName}
-            onChange={e => setFirstName(e.target.value)}
-            placeholder="Votre prénom"
-            className="w-full p-3 bg-gray-50 rounded-xl border border-gray-200 text-sm text-gray-900 focus:outline-none focus:border-green-500"
-          />
+          <input type="text" value={firstName} onChange={e => setFirstName(e.target.value)} placeholder="Votre prénom" className="w-full p-3 bg-gray-50 rounded-xl border border-gray-200 text-sm text-gray-900 focus:outline-none focus:border-green-500" />
         </div>
-
         <div className="mb-4">
           <label className="text-xs text-gray-400 mb-1 block">Nom *</label>
-          <input
-            type="text"
-            value={lastName}
-            onChange={e => setLastName(e.target.value)}
-            placeholder="Votre nom"
-            className="w-full p-3 bg-gray-50 rounded-xl border border-gray-200 text-sm text-gray-900 focus:outline-none focus:border-green-500"
-          />
+          <input type="text" value={lastName} onChange={e => setLastName(e.target.value)} placeholder="Votre nom" className="w-full p-3 bg-gray-50 rounded-xl border border-gray-200 text-sm text-gray-900 focus:outline-none focus:border-green-500" />
         </div>
-
         <div className="mb-4">
-          <label className="text-xs text-gray-400 mb-1 block">
-            Courriel <span className="text-gray-300">(optionnel)</span>
-          </label>
-          <input
-            type="email"
-            value={email}
-            onChange={e => setEmail(e.target.value)}
-            placeholder="exemple@courriel.com"
-            className="w-full p-3 bg-gray-50 rounded-xl border border-gray-200 text-sm text-gray-900 focus:outline-none focus:border-green-500"
-          />
+          <label className="text-xs text-gray-400 mb-1 block">Courriel <span className="text-gray-300">(optionnel)</span></label>
+          <input type="email" value={email} onChange={e => setEmail(e.target.value)} placeholder="exemple@courriel.com" className="w-full p-3 bg-gray-50 rounded-xl border border-gray-200 text-sm text-gray-900 focus:outline-none focus:border-green-500" />
         </div>
-
         <div className="mb-6">
-          <label className="text-xs text-gray-400 mb-1 block">
-            Autre téléphone <span className="text-gray-300">(optionnel)</span>
-          </label>
-          <input
-            type="tel"
-            value={otherPhone}
-            onChange={e => setOtherPhone(e.target.value)}
-            placeholder="+1 514 000 0000"
-            className="w-full p-3 bg-gray-50 rounded-xl border border-gray-200 text-sm text-gray-900 focus:outline-none focus:border-green-500"
-          />
-          <p className="text-xs text-gray-300 mt-1">
-            Peut être utilisé comme identifiant Interac
-          </p>
+          <label className="text-xs text-gray-400 mb-1 block">Autre téléphone <span className="text-gray-300">(optionnel)</span></label>
+          <input type="tel" value={otherPhone} onChange={e => setOtherPhone(e.target.value)} placeholder="+1 514 000 0000" className="w-full p-3 bg-gray-50 rounded-xl border border-gray-200 text-sm text-gray-900 focus:outline-none focus:border-green-500" />
+          <p className="text-xs text-gray-300 mt-1">Peut être utilisé comme identifiant Interac</p>
         </div>
-
         {error && <p className="text-red-500 text-xs mb-4">{error}</p>}
-
-        <button
-          onClick={handleCreate}
-          disabled={loading || !firstName || !lastName}
-          className="w-full bg-green-500 text-white py-3 rounded-xl text-sm font-medium hover:bg-green-600 disabled:opacity-50 transition-colors"
-        >
+        <button onClick={handleCreate} disabled={loading || !firstName || !lastName} className="w-full bg-green-500 text-white py-3 rounded-xl text-sm font-medium hover:bg-green-600 disabled:opacity-50 transition-colors">
           {loading ? 'Création...' : 'Commencer'}
         </button>
       </div>

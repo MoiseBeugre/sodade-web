@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
+import { API_URL } from '@/lib/config';
 
 const FREQUENCIES = [
   { value: 'weekly', label: 'Hebdomadaire' },
@@ -29,7 +30,7 @@ export default function CreateGroupPage() {
 
     try {
       const token = localStorage.getItem('access_token');
-      const res = await fetch(`https://sodade-api-production.up.railway.app/groups`, {
+      const res = await fetch(`${API_URL}/groups`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

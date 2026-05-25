@@ -1,6 +1,7 @@
 'use client';
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
+import { API_URL } from '@/lib/config';
 
 export default function Login() {
   const [phone, setPhone] = useState('');
@@ -13,7 +14,7 @@ export default function Login() {
     setLoading(true);
     setError('');
     try {
-      const res = await fetch(`https://sodade-api-production.up.railway.app/auth/send-otp`, {
+      const res = await fetch(`${API_URL}/auth/send-otp`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ phone: '+1' + phone, country_code: 'CA' }),
