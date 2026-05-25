@@ -17,7 +17,7 @@ export default function Profile() {
     setError('');
     try {
       const token = localStorage.getItem('access_token');
-      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/auth/profile`, {
+      const res = await fetch(`https://sodade-api-production.up.railway.app/auth/profile`, {
         method: 'PATCH',
         headers: {
           'Content-Type': 'application/json',

@@ -14,7 +14,7 @@ export default function GroupDetailPage() {
     const fetchGroup = async () => {
       try {
         const token = localStorage.getItem('access_token');
-        const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/groups/${code}`, {
+        const res = await fetch(`https://sodade-api-production.up.railway.app/groups/${code}`, {
           headers: { Authorization: `Bearer ${token}` },
         });
         const data = await res.json();

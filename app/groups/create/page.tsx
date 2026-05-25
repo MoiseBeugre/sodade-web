@@ -29,7 +29,7 @@ export default function CreateGroupPage() {
 
     try {
       const token = localStorage.getItem('access_token');
-      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/groups`, {
+      const res = await fetch(`https://sodade-api-production.up.railway.app/groups`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

@@ -15,7 +15,7 @@ export default function Dashboard() {
         const token = localStorage.getItem('access_token');
         if (!token) { router.push('/auth/login'); return; }
 
-        const profileRes = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/auth/profile`, {
+        const profileRes = await fetch(`https://sodade-api-production.up.railway.app/auth/profile`, {
           headers: { Authorization: `Bearer ${token}` },
         });
         if (profileRes.ok) {
@@ -23,7 +23,7 @@ export default function Dashboard() {
           setUserName(profileData.user?.first_name || '');
         }
 
-        const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/groups`, {
+        const res = await fetch(`https://sodade-api-production.up.railway.app/groups`, {
           headers: { Authorization: `Bearer ${token}` },
         });
         const data = await res.json();
