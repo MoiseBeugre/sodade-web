@@ -4,6 +4,18 @@ import { useState, useEffect } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import { API_URL } from '@/lib/config';
 
+const FREQUENCY_LABELS: any = {
+  weekly: 'Hebdomadaire',
+  biweekly: 'Bimensuel',
+  monthly: 'Mensuel',
+};
+
+const FREQUENCIES = [
+  { value: 'weekly', label: 'Hebdomadaire' },
+  { value: 'biweekly', label: 'Bimensuel' },
+  { value: 'monthly', label: 'Mensuel' },
+];
+
 export default function GroupDetailPage() {
   const { code } = useParams();
   const router = useRouter();
@@ -12,9 +24,14 @@ export default function GroupDetailPage() {
   const [copied, setCopied] = useState(false);
   const [shared, setShared] = useState(false);
   const [editing, setEditing] = useState(false);
-  const [editName, setEditName] = useState('');
-  const [editDescription, setEditDescription] = useState('');
   const [saving, setSaving] = useState(false);
+  const [editForm, setEditForm] = useState({
+    name: '',
+    description: '',
+    amount: '',
+    frequency: '',
+    startDate: '',
+  });
 
   useEffect(() => {
     const fetchGroup = async () => {
@@ -26,11 +43,15 @@ export default function GroupDetailPage() {
         const data = await res.json();
         if (res.ok) {
           setGroup(data);
-          setEditName(data.name);
-          setEditDescription(data.description || '');
+          setEditForm({
+            name: data.name,
+            description: data.description || '',
+            amount: String(data.amount),
+            frequency: data.frequency,
+            startDate: data.startDate ? data.startDate.slice(0, 10) : '',
+          });
           if (data.status === 'ACTIVE') {
             router.push('/groups/' + code + '/dashboard');
-            return;
           }
         }
       } catch (err) {
@@ -70,7 +91,13 @@ export default function GroupDetailPage() {
           'Content-Type': 'application/json',
           'Authorization': 'Bearer ' + token,
         },
-        body: JSON.stringify({ name: editName, description: editDescription }),
+        body: JSON.stringify({
+          name: editForm.name,
+          description: editForm.description,
+          amount: parseFloat(editForm.amount),
+          frequency: editForm.frequency,
+          startDate: editForm.startDate,
+        }),
       });
       if (res.ok) {
         const data = await res.json();
@@ -82,12 +109,6 @@ export default function GroupDetailPage() {
     } finally {
       setSaving(false);
     }
-  };
-
-  const FREQUENCY_LABELS: any = {
-    weekly: 'Hebdomadaire',
-    biweekly: 'Bimensuel',
-    monthly: 'Mensuel',
   };
 
   if (loading) return (
@@ -114,84 +135,83 @@ export default function GroupDetailPage() {
 
         {/* Carte groupe */}
         <div className="bg-white rounded-2xl shadow-sm p-6 mb-4">
-          <div className="flex items-start justify-between mb-4">
-            <div className="flex-1 mr-3">
-              {editing ? (
-                <div className="space-y-2">
-                  <input
-                    type="text"
-                    value={editName}
-                    onChange={e => setEditName(e.target.value)}
-                    className="w-full border border-emerald-300 rounded-lg px-3 py-2 text-sm font-bold text-gray-900 focus:outline-none focus:ring-2 focus:ring-emerald-500"
-                  />
-                  <input
-                    type="text"
-                    value={editDescription}
-                    onChange={e => setEditDescription(e.target.value)}
-                    placeholder="Description (optionnel)"
-                    className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm text-gray-500 focus:outline-none focus:ring-2 focus:ring-emerald-500"
-                  />
-                  <div className="flex gap-2 mt-2">
-                    <button
-                      onClick={saveEdit}
-                      disabled={saving}
-                      className="bg-emerald-500 text-white text-xs px-4 py-2 rounded-lg font-medium disabled:opacity-50"
-                    >
-                      {saving ? 'Sauvegarde...' : 'Sauvegarder'}
-                    </button>
-                    <button
-                      onClick={() => { setEditing(false); setEditName(group.name); setEditDescription(group.description || ''); }}
-                      className="bg-gray-100 text-gray-600 text-xs px-4 py-2 rounded-lg font-medium"
-                    >
-                      Annuler
-                    </button>
-                  </div>
+          {editing ? (
+            <div className="space-y-3">
+              <div>
+                <label className="text-xs text-gray-400 mb-1 block">Nom du groupe</label>
+                <input type="text" value={editForm.name} onChange={e => setEditForm({ ...editForm, name: e.target.value })} className="w-full border border-emerald-300 rounded-xl px-3 py-2 text-sm font-bold text-gray-900 focus:outline-none focus:ring-2 focus:ring-emerald-500" />
+              </div>
+              <div>
+                <label className="text-xs text-gray-400 mb-1 block">Description</label>
+                <input type="text" value={editForm.description} onChange={e => setEditForm({ ...editForm, description: e.target.value })} placeholder="Optionnel" className="w-full border border-gray-200 rounded-xl px-3 py-2 text-sm text-gray-500 focus:outline-none focus:ring-2 focus:ring-emerald-500" />
+              </div>
+              <div className="grid grid-cols-2 gap-3">
+                <div>
+                  <label className="text-xs text-gray-400 mb-1 block">Montant (CAD)</label>
+                  <input type="number" min="25" value={editForm.amount} onChange={e => setEditForm({ ...editForm, amount: e.target.value })} className="w-full border border-gray-200 rounded-xl px-3 py-2 text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-emerald-500" />
                 </div>
-              ) : (
-                <div className="flex items-start gap-2">
-                  <div>
-                    <h1 className="text-xl font-bold text-gray-900">{group.name}</h1>
-                    {group.description && <p className="text-gray-500 text-sm mt-1">{group.description}</p>}
-                  </div>
+                <div>
+                  <label className="text-xs text-gray-400 mb-1 block">Fréquence</label>
+                  <select value={editForm.frequency} onChange={e => setEditForm({ ...editForm, frequency: e.target.value })} className="w-full border border-gray-200 rounded-xl px-3 py-2 text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-emerald-500">
+                    {FREQUENCIES.map(f => (<option key={f.value} value={f.value}>{f.label}</option>))}
+                  </select>
+                </div>
+              </div>
+              <div>
+                <label className="text-xs text-gray-400 mb-1 block">Date de départ</label>
+                <input type="date" value={editForm.startDate} onChange={e => setEditForm({ ...editForm, startDate: e.target.value })} className="w-full border border-gray-200 rounded-xl px-3 py-2 text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-emerald-500" />
+              </div>
+              <div className="flex gap-2 pt-1">
+                <button onClick={saveEdit} disabled={saving} className="bg-emerald-500 text-white text-sm px-5 py-2 rounded-xl font-medium disabled:opacity-50">
+                  {saving ? 'Sauvegarde...' : 'Sauvegarder'}
+                </button>
+                <button onClick={() => setEditing(false)} className="bg-gray-100 text-gray-600 text-sm px-5 py-2 rounded-xl font-medium">
+                  Annuler
+                </button>
+              </div>
+            </div>
+          ) : (
+            <>
+              <div className="flex items-start justify-between mb-4">
+                <div className="flex-1 mr-3">
+                  <h1 className="text-xl font-bold text-gray-900">{group.name}</h1>
+                  {group.description && <p className="text-gray-500 text-sm mt-1">{group.description}</p>}
+                </div>
+                <div className="flex items-center gap-2">
                   {!shared && (
-                    <button
-                      onClick={() => setEditing(true)}
-                      className="text-gray-300 hover:text-emerald-500 transition mt-1"
-                      title="Modifier"
-                    >
+                    <button onClick={() => setEditing(true)} className="text-gray-300 hover:text-emerald-500 transition text-lg" title="Modifier">
                       ✏️
                     </button>
                   )}
+                  <span className={'text-xs px-3 py-1 rounded-full font-medium ' + (
+                    group.status === 'ACTIVE' ? 'bg-emerald-100 text-emerald-700' :
+                    group.status === 'PENDING' ? 'bg-yellow-100 text-yellow-700' :
+                    'bg-gray-100 text-gray-600'
+                  )}>
+                    {group.status === 'ACTIVE' ? 'Actif' : group.status === 'PENDING' ? 'En attente' : group.status}
+                  </span>
                 </div>
-              )}
-            </div>
-            <span className={'text-xs px-3 py-1 rounded-full font-medium ' + (
-              group.status === 'ACTIVE' ? 'bg-emerald-100 text-emerald-700' :
-              group.status === 'PENDING' ? 'bg-yellow-100 text-yellow-700' :
-              'bg-gray-100 text-gray-600'
-            )}>
-              {group.status === 'ACTIVE' ? 'Actif' : group.status === 'PENDING' ? 'En attente' : group.status}
-            </span>
-          </div>
-
-          <div className="grid grid-cols-2 gap-4">
-            <div className="bg-gray-50 rounded-xl p-3">
-              <p className="text-xs text-gray-400 mb-1">Montant</p>
-              <p className="font-bold text-gray-900">{group.amount} CAD</p>
-            </div>
-            <div className="bg-gray-50 rounded-xl p-3">
-              <p className="text-xs text-gray-400 mb-1">Fréquence</p>
-              <p className="font-bold text-gray-900">{FREQUENCY_LABELS[group.frequency] || group.frequency}</p>
-            </div>
-            <div className="bg-gray-50 rounded-xl p-3">
-              <p className="text-xs text-gray-400 mb-1">Membres</p>
-              <p className="font-bold text-gray-900">{group.memberships?.length} / {group.maxMembers}</p>
-            </div>
-            <div className="bg-gray-50 rounded-xl p-3">
-              <p className="text-xs text-gray-400 mb-1">Départ</p>
-              <p className="font-bold text-gray-900">{new Date(group.startDate).toLocaleDateString('fr-CA')}</p>
-            </div>
-          </div>
+              </div>
+              <div className="grid grid-cols-2 gap-4">
+                <div className="bg-gray-50 rounded-xl p-3">
+                  <p className="text-xs text-gray-400 mb-1">Montant</p>
+                  <p className="font-bold text-gray-900">{group.amount} CAD</p>
+                </div>
+                <div className="bg-gray-50 rounded-xl p-3">
+                  <p className="text-xs text-gray-400 mb-1">Fréquence</p>
+                  <p className="font-bold text-gray-900">{FREQUENCY_LABELS[group.frequency] || group.frequency}</p>
+                </div>
+                <div className="bg-gray-50 rounded-xl p-3">
+                  <p className="text-xs text-gray-400 mb-1">Membres</p>
+                  <p className="font-bold text-gray-900">{group.memberships?.length} / {group.maxMembers}</p>
+                </div>
+                <div className="bg-gray-50 rounded-xl p-3">
+                  <p className="text-xs text-gray-400 mb-1">Départ</p>
+                  <p className="font-bold text-gray-900">{new Date(group.startDate).toLocaleDateString('fr-CA')}</p>
+                </div>
+              </div>
+            </>
+          )}
         </div>
 
         {/* Code d'invitation */}
@@ -214,12 +234,12 @@ export default function GroupDetailPage() {
           </button>
         </div>
 
-        <button onClick={() => router.push('/groups/' + code + '/rotation')} className="w-full mt-3 border border-emerald-500 text-emerald-600 hover:bg-emerald-50 font-medium py-3 rounded-xl text-sm transition bg-white rounded-2xl shadow-sm">
+        <button onClick={() => router.push('/groups/' + code + '/rotation')} className="w-full mb-4 border border-emerald-500 text-emerald-600 hover:bg-emerald-50 font-medium py-3 rounded-xl text-sm transition bg-white shadow-sm">
           Ordre de rotation
         </button>
 
         {/* Liste des membres */}
-        <div className="bg-white rounded-2xl shadow-sm p-6 mt-4">
+        <div className="bg-white rounded-2xl shadow-sm p-6">
           <h2 className="text-sm font-semibold text-gray-700 mb-4">Membres ({group.memberships?.length})</h2>
           <div className="space-y-3">
             {group.memberships?.map((m: any) => (
