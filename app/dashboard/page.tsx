@@ -15,9 +15,7 @@ export default function Dashboard() {
         const token = localStorage.getItem('access_token');
         if (!token) { router.push('/auth/login'); return; }
 
-        const payload = JSON.parse(atob(token.split('.')[1]));
-        
-        const profileRes = await fetch('${process.env.NEXT_PUBLIC_API_URL}/auth/profile', {
+        const profileRes = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/auth/profile`, {
           headers: { Authorization: `Bearer ${token}` },
         });
         if (profileRes.ok) {
@@ -25,7 +23,7 @@ export default function Dashboard() {
           setUserName(profileData.user?.first_name || '');
         }
 
-        const res = await fetch('${process.env.NEXT_PUBLIC_API_URL}/groups', {
+        const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/groups`, {
           headers: { Authorization: `Bearer ${token}` },
         });
         const data = await res.json();
@@ -61,8 +59,6 @@ export default function Dashboard() {
   return (
     <div className="min-h-screen bg-gray-50 p-4">
       <div className="max-w-md mx-auto">
-
-        {/* Header */}
         <div className="flex items-center justify-between mt-6 mb-6">
           <div>
             <h1 className="text-xl font-bold text-gray-900">
@@ -77,7 +73,6 @@ export default function Dashboard() {
           </div>
         </div>
 
-        {/* Boutons d'action */}
         <div className="grid grid-cols-2 gap-3 mb-6">
           <button
             onClick={() => router.push('/groups/create')}
@@ -93,7 +88,6 @@ export default function Dashboard() {
           </button>
         </div>
 
-        {/* Liste des groupes */}
         {groups.length === 0 ? (
           <div className="bg-white rounded-2xl shadow-sm p-8 text-center">
             <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
@@ -122,8 +116,8 @@ export default function Dashboard() {
                         <p className="text-xs text-gray-400 mt-0.5">{group.description}</p>
                       )}
                       <div className="flex justify-end mt-3">
-                    <span className="text-xs text-emerald-600 font-medium">Voir le groupe →</span>
-                  </div>
+                        <span className="text-xs text-emerald-600 font-medium">Voir le groupe →</span>
+                      </div>
                     </div>
                     <span className={`text-xs px-2 py-1 rounded-full font-medium ${status.bg} ${status.text}`}>
                       {status.label}
@@ -158,7 +152,6 @@ export default function Dashboard() {
             })}
           </div>
         )}
-
       </div>
     </div>
   );
