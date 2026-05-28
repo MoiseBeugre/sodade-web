@@ -256,6 +256,34 @@ export default function RotationPage() {
           </button>
         )}
 
+        {/* Bouton déverrouiller — admin seulement, si cycles pas encore démarrés */}
+        {isAdmin && group?.rotationLocked && group?.status === 'PENDING' && selectedMode !== 'RANDOM' && (
+          <button
+            onClick={async () => {
+              setSaving(true);
+              setError('');
+              try {
+                const token = localStorage.getItem('access_token');
+                const res = await fetch(`https://sodade-api-production.up.railway.app/groups/${code}/unlock-rotation`, {
+                  method: 'POST',
+                  headers: { Authorization: `Bearer ${token}` },
+                });
+                const data = await res.json();
+                if (!res.ok) throw new Error(data.message);
+                setGroup(data);
+              } catch (err: any) {
+                setError(err.message);
+              } finally {
+                setSaving(false);
+              }
+            }}
+            disabled={saving}
+            className="w-full mb-3 border border-red-300 text-red-500 hover:bg-red-50 font-medium py-3 rounded-xl text-sm transition disabled:opacity-50"
+          >
+            {saving ? 'Déverrouillage...' : '🔓 Déverrouiller l\'ordre'}
+          </button>
+        )}
+
 
 {isAdmin && group?.rotationLocked && (
           <button
