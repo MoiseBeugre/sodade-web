@@ -17,11 +17,6 @@ export default function GroupDashboard() {
         const payload = JSON.parse(atob(token!.split('.')[1]));
         setCurrentUserId(payload.sub);
 
-        const groupRes = await fetch(`https://sodade-api-production.up.railway.app/groups/${code}`, {
-          headers: { Authorization: `Bearer ${token}` },
-        });
-        const groupData = await groupRes.json();
-
         const res = await fetch(`https://sodade-api-production.up.railway.app/groups/${code}/cycles/dashboard`, {
           headers: { Authorization: `Bearer ${token}` },
         });
@@ -74,20 +69,6 @@ export default function GroupDashboard() {
 
         <h1 className="text-xl font-bold text-gray-900 mb-1">{group.name}</h1>
         <p className="text-gray-500 text-sm mb-6">{FREQUENCY_LABELS[group.frequency]} · {group.amount} CAD/membre</p>
-
-        {/* Pas encore de cycles — guider vers la rotation */}
-        {!activeCycle && allCycles?.length === 0 && isAdmin && (
-          <div className="bg-yellow-50 border border-yellow-200 rounded-2xl p-4 mb-4">
-            <p className="text-sm font-medium text-yellow-800 mb-1">Le groupe n'a pas encore démarré</p>
-            <p className="text-xs text-yellow-600 mb-3">Configure l'ordre de rotation puis lance les cycles.</p>
-            <button
-              onClick={() => router.push(`/groups/${code}/rotation`)}
-              className="text-xs px-4 py-2 rounded-xl bg-yellow-500 text-white font-medium hover:bg-yellow-600 transition"
-            >
-              Configurer la rotation →
-            </button>
-          </div>
-        )}
 
         {/* Cycle actif */}
         {activeCycle && (
